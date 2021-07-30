@@ -1,0 +1,16 @@
+listenPort: 4000
+loginTokenLifeTimeSeconds: 600
+maxLoginTokenCount: 4
+smtp:
+  fromAddr: "alice@example.com"
+  user: "alice"
+  password: "insecure"
+  host: "example.com"
+  port: 25
+tokenFormat: "numeric"
+tokenLength: 8
+statePath: "testState"
+keyPath: "testKeys"
+serviceName: "PasswordlessTest"
+accessTokenLifetimeSeconds: 600
+refreshTokenLifetimeSeconds: 1200
