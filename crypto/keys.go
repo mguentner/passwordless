@@ -192,3 +192,58 @@ func ValidateRefreshToken(keyPairs []PublicPrivateRSAKeyPair, token string) (*De
 func ValidateAccessToken(keyPairs []PublicPrivateRSAKeyPair, token string) (*DefaultClaims, error) {
 	return validateToken(keyPairs, token, "access")
 }
+
+func KeyPairForTesting() []PublicPrivateRSAKeyPair {
+	privateKey := `-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAofMH3ayoHeB4h1lTiP/t4ZOVQ6yHRNiUnsqzDidjZvs2X/JQ
+5q2eHDlCFEJtNpmsojnOrN81W2neFlVDDJ3PFgOS/ErqcKlH88/pXj6fTKwrNHOl
+Zxykw8RM72p5uAHKpxgJVS0LbcGm2KCk+PYRM2lcxyi5h3xme2ROgngBWyRVxg7c
+0OjIk1cLBYo+fEWYGp54OuX0qpFK6scpC3S8Eof4y0VKyJ6Vc1Hhe/wlT7nJxOZI
+Soyo1qCj3qW5oTpgQdEYt+32ZxkuCuAfUVMMhMFO7hjjHfuyof366D1DYFdewSNN
+66ZJI9DNbUPgfFnl4VmRvznmQrN3GLkHHuhZywIDAQABAoIBAFr+aYIFG+TFlhM+
+fnAwlKE1Qh3nF434PvFFpPuj5/cZ2UBpr0kdbgQfq+AkPqb6C4SPBHAfbiRxxIY5
+29V/6bZNxc2Z7kXk53e3b0Ez4F+9MP1kqR/ZeT5B0pSG9+MKpqniGIRSLeS6dRus
+j2UPJTUE00tXt37Hx/E2t+IYuXJSf/T3/7V0FiYAJIAzA64+4/R/b1lgTu8LdoC2
+SnloYtL/TWF7gg+jQExYEiiL6qxzKAPqtGeZxoONjU8GDXixxDdCsuF3887bUAur
+bZOIVEFEujGyf2u3pMpR9k32HYJ+pPsYFLUIngJeNOyDm/H2mmNIpIBKm4zI6zbZ
+f7rAQQkCgYEA1vlCSAdFFfki3gdgm7DPDMXdRgdqZpRkAm75YFAo4Fg0JWzw8HAA
+Mm1P306n6QLjao1LxhMe6Z1Ce/kOynqxLSYqSUjczYWgf+2fh63KsS/FXIfggtbY
+Bw9htci6tk+3k216my24VL09Lc+66flt/zBIyEJBayHJ0Us5q1adTAUCgYEAwNs3
+4FrLnOWllUexNg3RT3vp39VBVdkXoVhZY7RmlntDbD+S56JdfuI3KU57w5uZi0si
+WFIRdL4+ic6qbn0E9LnXjtcLgXIjbue7Laj72tEbw4ZXZx/RP6W5Q2DtUbzeyNxP
+fwfkNuJr1YubzNYJs+LNHbbYxCiQU3vN8SCXx48CgYAbembvgAZjpaHAUZ8Wp4X/
+svbysZX3ILab3QWBOx3Od1fLBN7TTO2phHF2ML6juRvKjd8GpYEJCXHrGM28Meyd
+wcgb7/VRS+hVEdGXbS6AcYO/rRqUftPEK0IpE0xSa2Qisxa96R0rr7i3N1tD9v8J
+ZGmZN2bXQ81hNEVd0kdu5QKBgQCE8Jg711qz9LmHhbvqfuvh1pEI8n/vJY7ccYJs
+8FYnNSDs5YXmlk3MwTM1DhzSYdgd5NTv/OJ7jwidBhEFyLg52kF0/Ve5C2zRbnvg
+pbO2yp5Q0bI+K/iZ3yst/wqYZZFM9FD4SABQtROQSIRFVuWpUpYB/aC+1xdl9Nmp
+dcYqkQKBgQCccewmQnqJv9r6ZKLQGlzFKKfzlJMva9xYTDwoEzg6s8yaFpSbewp4
+2IHw6228eeDWDMh8Ge1ZQNIWf4+vWEvWKn2gyWZ+caJBfesN5GHy6XlFpGYdbQnC
+/irCLnYcupzN/IDNIl45kJwpRssb1gugguDZv1h+3j52wWFSdAElEQ==
+-----END RSA PRIVATE KEY-----`
+	publicKey := `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAofMH3ayoHeB4h1lTiP/t
+4ZOVQ6yHRNiUnsqzDidjZvs2X/JQ5q2eHDlCFEJtNpmsojnOrN81W2neFlVDDJ3P
+FgOS/ErqcKlH88/pXj6fTKwrNHOlZxykw8RM72p5uAHKpxgJVS0LbcGm2KCk+PYR
+M2lcxyi5h3xme2ROgngBWyRVxg7c0OjIk1cLBYo+fEWYGp54OuX0qpFK6scpC3S8
+Eof4y0VKyJ6Vc1Hhe/wlT7nJxOZISoyo1qCj3qW5oTpgQdEYt+32ZxkuCuAfUVMM
+hMFO7hjjHfuyof366D1DYFdewSNN66ZJI9DNbUPgfFnl4VmRvznmQrN3GLkHHuhZ
+ywIDAQAB
+-----END PUBLIC KEY-----`
+	privateKeyData, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+	publicKeyData, err := jwt.ParseRSAPublicKeyFromPEM([]byte(publicKey))
+	if err != nil {
+		log.Fatal().Msg(err.Error())
+	}
+	return []PublicPrivateRSAKeyPair{
+		{
+			ValidFrom:    0,
+			PrivateKey:   privateKeyData,
+			PublicKeyPEM: publicKey,
+			PublicKey:    publicKeyData,
+		},
+	}
+}
