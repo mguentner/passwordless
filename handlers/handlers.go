@@ -139,8 +139,8 @@ func RefreshHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ClaimsInfoHandler(w http.ResponseWriter, r *http.Request) {
-	accessToken := r.Context().Value("accessToken").(*crypto.DefaultClaims)
-	if accessToken == nil {
+	accessToken, ok := r.Context().Value("accessToken").(*crypto.DefaultClaims)
+	if !ok || accessToken == nil {
 		middleware.HttpJSONError(w, "No accessToken found", http.StatusUnauthorized)
 		return
 	}
