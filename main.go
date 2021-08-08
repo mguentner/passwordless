@@ -24,15 +24,15 @@ var (
 func main() {
 	flag.StringVar(&configPath, "configPath", "config.yaml", "path to the config file")
 	flag.Parse()
-	config, err := config.ReadConfigFromFile(configPath)
+	appConfig, err := config.ReadConfigFromFile(configPath)
 	if err != nil {
 		log.Fatal().Msgf("Could not read config: %v", err)
 	}
-	rsaKeys, err := crypto.ReadRSAKeysFromPath(config.KeyPath)
+	rsaKeys, err := crypto.ReadRSAKeysFromPath(appConfig.KeyPath)
 	if err != nil {
 		log.Fatal().Msgf("Could setup crypto %v", err)
 	}
-	state, err := state.NewState(*config, rsaKeys)
+	state, err := state.NewState(*appConfig, rsaKeys)
 	if err != nil {
 		log.Fatal().Msgf("Could create state: %v", err)
 	}
@@ -56,10 +56,13 @@ func main() {
 	corsHandler := cors.AllowAll().Handler(router)
 	ctxHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), "state", state)
-		ctx = context.WithValue(ctx, "config", config)
+		basicConfig := config.BasicConfig{
+			Config: *appConfig,
+		}
+		ctx = context.WithValue(ctx, "config", basicConfig)
 		corsHandler.ServeHTTP(w, r.WithContext(ctx))
 	})
-	log.Info().Msgf("Starting to listen on port %d", config.ListenPort)
-	http.ListenAndServe(fmt.Sprintf(":%d", config.ListenPort), ctxHandler)
+	log.Info().Msgf("Starting to listen on port %d", appConfig.ListenPort)
+	http.ListenAndServe(fmt.Sprintf(":%d", appConfig.ListenPort), ctxHandler)
 	return
 }

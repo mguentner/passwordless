@@ -14,15 +14,16 @@ import (
 
 func GetStateAndConfig(w http.ResponseWriter, r *http.Request) (*state.State, *config.Config, bool) {
 	state := r.Context().Value("state").(*state.State)
-	config := r.Context().Value("config").(*config.Config)
+	configurable := r.Context().Value("config").(config.Configurable)
 	if state == nil {
 		log.Error().Msg("Setup error: No state in context")
 		return nil, nil, false
 	}
-	if config == nil {
+	if configurable == nil {
 		log.Error().Msg("Setup error: No config in context")
 		return nil, nil, false
 	}
+	config := configurable.GetConfig()
 	return state, config, true
 }
 

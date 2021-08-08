@@ -39,7 +39,7 @@ type Config struct {
 	RefreshTokenLifetimeSeconds uint64 `yaml:"refreshTokenLifetimeSeconds"`
 }
 
-func (c Config) validate() error {
+func (c Config) Validate() error {
 	if c.ListenPort == 0 {
 		return errors.New("Invalid listenPort")
 	}
@@ -72,9 +72,21 @@ func ReadConfigFromFile(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = config.validate()
+	err = config.Validate()
 	if err != nil {
 		return &config, err
 	}
 	return &config, nil
+}
+
+type Configurable interface {
+	GetConfig() *Config
+}
+
+type BasicConfig struct {
+	Config
+}
+
+func (e BasicConfig) GetConfig() *Config {
+	return &e.Config
 }
