@@ -58,12 +58,12 @@ func EncodeIdentifier(identifier string) string {
 
 func (s *State) TokensForIdentifier(identifier string) ([]string, error) {
 	encodedIdentifier := EncodeIdentifier(identifier)
+	prefix := fmt.Sprintf("%s-token", encodedIdentifier)
 	tokens := []string{}
 	err := s.DB.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix := []byte(encodedIdentifier)
-		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+		for it.Seek([]byte(prefix)); it.ValidForPrefix([]byte(prefix)); it.Next() {
 			item := it.Item()
 			err := item.Value(func(v []byte) error {
 				tokens = append(tokens, string(v[:]))
@@ -88,7 +88,7 @@ func (s *State) InsertToken(config config.Config, identifier string, token strin
 	currentTimeStamp := time.Now().Unix()
 	encodedIdentifier := EncodeIdentifier(identifier)
 	nonce := rand.Int()
-	key := fmt.Sprintf("%s-%d-%d", encodedIdentifier, currentTimeStamp, nonce)
+	key := fmt.Sprintf("%s-token-%d-%d", encodedIdentifier, currentTimeStamp, nonce)
 	err := s.DB.Update(func(txn *badger.Txn) error {
 		tokens := []string{}
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
@@ -123,7 +123,8 @@ func keyForIdentifierTokenPair(txn *badger.Txn, identifier string, token string)
 		key := []byte{}
 		err := item.Value(func(v []byte) error {
 			if string(v) == token {
-				key = it.Item().Key()
+				k := it.Item().Key()
+				key = append([]byte{}, k...)
 				return nil
 			}
 			return nil
